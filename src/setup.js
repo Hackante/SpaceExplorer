@@ -2,7 +2,7 @@
 
 const fs = require("fs");
 const { Collection } = require("discord.js");
-const { connect } = require("mongoose")
+const { connect, connection } = require("mongoose")
 
 const client = require("./index.js");
 
@@ -28,4 +28,15 @@ fs.readdirSync("./src/events", { withFileTypes: true }).filter(file => file.isFi
 });
 
 // Database
-await connect(process.env.MONGO).then(() => console.log("✅ Database is connected!")).catch(err => console.log(`❎ Error with connecting to the database!\n${err}`));
+connect(process.env.MONGO).then(() => console.log("✅ Database is connected!")).catch(err => console.log(`❎ Error with connecting to the database!\n${err}`));
+connection.on("error", (err) => {
+    console.error(err);
+});
+connection.on("disconnected", () => {
+    console.log("❎ Database is disconnected!");
+    // Disable DB commands
+});
+connection.on("reconnected", () => {
+    console.log("✅ Database is reconnected!");
+    // Enable DB commands
+});
