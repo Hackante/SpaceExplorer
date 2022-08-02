@@ -19,6 +19,8 @@
   "homepage": "https://github.com/Hackante/SpaceExplorer#readme",
   "dependencies": {
     "discord.js": "^14.1.2",
-    "dotenv": "^16.0.1"
+    "dotenv": "^16.0.1",
+    "fs": "^0.0.1-security",
+    "mongoose": "^6.5.0"
   }
 }

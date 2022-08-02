@@ -12,6 +12,7 @@ const client = new Client({
     failIfNotExists: false // Sends normal message if message to reply to was deleted
 })
 
+require("./setup.js");
 client.login(process.env.TOKEN);
 
 // In case we need the client somewhere else
