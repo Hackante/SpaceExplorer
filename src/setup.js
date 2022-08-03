@@ -9,6 +9,9 @@ const client = require("./index.js");
 // Collections
 client.commands = new Collection();
 
+// Config.json
+client.config =  require("./config.json");
+
 // Categories
 fs.readdirSync("./src/commands", { withFileTypes: true }).filter(file => file.isDirectory()).forEach(category => { // Don't access none existing folders
     console.log(`Loading commands in ${category.name}...`);
