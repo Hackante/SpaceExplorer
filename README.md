@@ -5,4 +5,3 @@ SpaceExplorer is a Discord bot that is used to have fun exploring the "Space". Y
 | Command | Description |
 |---------|-------------|
 | `ping` | Replies with the bot's ping |
-| `help` | Shows this help message |

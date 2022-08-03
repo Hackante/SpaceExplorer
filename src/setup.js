@@ -10,7 +10,7 @@ const client = require("./index.js");
 client.commands = new Collection();
 
 // Config.json
-client.config =  require("./config.json");
+client.config = require("./config.json");
 
 // Categories
 fs.readdirSync("./src/commands", { withFileTypes: true }).filter(file => file.isDirectory()).forEach(category => { // Don't access none existing folders
@@ -42,4 +42,31 @@ connection.on("disconnected", () => {
 connection.on("reconnected", () => {
     console.log("✅ Database is reconnected!");
     // Enable DB commands
+});
+
+// Deploy commands
+client.once("ready", () => {
+    client.commands.each(command => {
+        client.application.commands.fetch().then(commands => {
+            let com = commands.find(c => c.name == command.object.name);
+            if (!com) {
+                // Creating non existing commands
+                client.application.commands.create(command.object).then(() => {
+                    console.log(`✅ Command ${command.object.name} was deployed!`);
+                }).catch(err => {
+                    console.log(`❎ Error with deploying command ${command.object.name}!\n${err}`);
+                });
+            } else {
+                // Updating existing commands
+                if (!com.equals(command.object)) {
+                    client.application.commands.edit(com, command.object).then(() => {
+                        console.log(`✅ Command ${command.object.name} was updated!`);
+                    }).catch(err => {
+                        console.log(`❎ Error with updating command ${command.object.name}!\n${err}`);
+                    });
+                }
+            }
+        }).catch(err => console.log(`❎ Error with fetching commands!\n${err}`));
+    })
+    console.log(`${client.commands.size} commands loaded!`);
 });
