@@ -1,6 +1,6 @@
 module.exports = (interaction, client) => {
     // Return if user blacklisted and commandName is not appeal
-    if(interaction.explorer.blacklisted && interaction.commandName != "appeal") return;
+    //if(interaction.explorer.blacklisted && interaction.commandName != "appeal") return;
 
     // Search for the command
     const command = client.commands.get(interaction.commandName);
