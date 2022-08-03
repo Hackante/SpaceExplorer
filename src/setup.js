@@ -2,7 +2,7 @@
 
 const fs = require("fs");
 const { Collection } = require("discord.js");
-const { connect, connection } = require("mongoose")
+const { connect, connection } = require("mongoose");
 
 const client = require("./index.js");
 
