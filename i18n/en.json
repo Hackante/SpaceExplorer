@@ -1,0 +1,14 @@
+{
+    "error": {
+        "unknown": "An unknown error has occurred. Please notify the developers about this."
+    },
+    "deny": {
+        "button": "❌ This button is not for you!"
+    },
+    "mission": {
+        "cancel": "❌ Cancelled the mission.",
+        "notReady": "❌ You can only complete a discovery mission every 12 hours. Your next mission is available at <t:{time}:t>.",
+        "expActive": "❌ Your Robo is already on an exploration. It returns at <t:{time}:t>.",
+        "expStart": "🔍 You have started an exploration. Your Robo will return at <t:{time}:t>."
+    }
+}

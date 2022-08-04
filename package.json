@@ -21,6 +21,9 @@
     "discord.js": "^14.1.2",
     "dotenv": "^16.0.1",
     "fs": "^0.0.1-security",
-    "mongoose": "^6.5.0"
+    "mongoose": "^6.5.0",
+    "quick.db": "^9.0.6",
+    "string-template": "^1.0.0",
+    "xmlhttprequest": "^1.8.0"
   }
 }

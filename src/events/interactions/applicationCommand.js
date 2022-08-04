@@ -19,7 +19,7 @@ module.exports = (interaction, client) => {
         interaction.reply({content: "❎ You do not have permission to use this command!\nMissing: [Beta Access]", ephemeral: true});
         return;
     }
-    if(command.guildOnly && !interaction.guild) {
+    if(command.guildOnly && !interaction.inGuild()) {
         interaction.reply({content: "❎ You can only use this command in a server!", ephemeral: true});
         return;
     }

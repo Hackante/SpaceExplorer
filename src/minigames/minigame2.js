@@ -11,7 +11,7 @@ module.exports = {
 
         // Creating a mission embed
         let missionEmb = {
-            color: client.config.invisColor,
+            color: client.utils.resolveColor(client.config.colors.invis),
             description: `‍🚀 An enemy spaceship has been destroying cargo ships in D sector. We need someone to look into it and take care of the intruder.`,
         }
 
@@ -118,7 +118,7 @@ module.exports = {
 
                 } else if (i.customId === 'cancel') {
                     // Reply if the user cancels the interaction
-                    interaction.reply({ embeds: [{ color: client.config.invisColor, description: client.config.cancelledReply }] });
+                    interaction.reply({ embeds: [{ color: client.utils.resolveColor(client.config.colors.invis), description: client.config.mission.cancel }] });
 
                     // Disable both buttons
                     confirmRow.components[0].setDisabled(true);
@@ -129,7 +129,7 @@ module.exports = {
 
             } else {
                 // "This button is not for you" -- Send this when a user clicks a button on a msg that they did not begin
-                i.reply({ embeds: [{ color: client.config.invisColor, description: client.config.not4uReply }], ephemeral: true });
+                i.reply({ embeds: [{ color: client.utils.resolveColor(client.config.colors.invis), description: client.config.deny.button }], ephemeral: true });
             }
         });
 

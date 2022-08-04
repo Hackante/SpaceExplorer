@@ -1,10 +1,7 @@
 {
-    "color": 273251,
-    "hexCode": "#042B63",
-    "invisColor": "2f3136",
-    "developers" : ["517335997172809728", "422603238936936450"],
-
-    "not4uReply": "❌ This button is not for you!",
-    "cancelledReply": "❌ Cancelled the mission."
-    
+    "colors": {
+        "invis": "#2f3136",
+        "spaceBlue": "#042B63"
+    },
+    "developers" : ["517335997172809728", "422603238936936450"]
 }

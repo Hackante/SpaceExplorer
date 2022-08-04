@@ -15,6 +15,10 @@ module.exports = (client) => {
             interaction.user.send({embeds: [embed]});
         }
 
+        interaction.i18n = (key, data) => {
+            return require("../../i18n")({key, replaceData: data, language: interaction.explorer.settings.language})
+        }
+
         if(interaction.explorer.blacklisted && !interaction.type == 2) return;
 
         switch (interaction.type) {

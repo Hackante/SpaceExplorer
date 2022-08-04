@@ -69,3 +69,9 @@ client.once("ready", () => {
     })
     console.log(`${client.commands.size} commands loaded!`);
 });
+
+// Utils
+client.utils = require("./utils.js");
+
+// i18n
+client.i18n = require("../i18n");

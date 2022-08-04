@@ -5,7 +5,7 @@ module.exports = {
     },
     run: function(interaction, client) {
         let embed = {
-            color: client.config.invisColor,
+            color: client.utils.resolveColor(client.config.colors.invis),
             description: `Pinging...\nResult: ${client.ws.ping}ms`,
         }
         interaction.reply({embeds: [embed]});

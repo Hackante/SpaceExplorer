@@ -6,6 +6,17 @@ const schema = new Schema({
     statistics: {
         joined: { type: Date, default: new Date() },
         commandsUsed: { type: Number, default: 0 },
+        discoveries: { type: Number, default: 0 },
+        exploiations: { type: Number, default: 0 },
+    },
+    settings: {
+        language: { type: String, default: "en" },
+    },
+    missions: {
+        lastDiscovery: { type: Date, default: new Date(0) },
+        discActive: { type: Boolean, default: false },
+        expActive: { type: Boolean, default: false },
+        expEnd: { type: Date, default: null },
     }
 });
 
