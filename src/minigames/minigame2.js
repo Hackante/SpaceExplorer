@@ -2,12 +2,11 @@
 
 const { ComponentType } = require("discord.js");
 
+let actionCollector;
+
 module.exports = {
     async start(client, interaction) {
         interaction.deferReply();
-
-        // This is a "blank", an emoji that is invisible
-        const n = "<:blank:1004637804619374653>";
 
         // Creating a mission embed
         let missionEmb = {
@@ -37,9 +36,9 @@ module.exports = {
         interaction.editReply({ embeds: [missionEmb], components: [confirmRow] });
 
 
-        const confirmCollector = interaction.createMessageComponentCollector({ componentType: ComponentType.Button, time: 15000 });
+        const collector = interaction.createMessageComponentCollector({ componentType: ComponentType.Button, time: 15000 });
 
-        confirmCollector.on('collect', i => {
+        collector.on('collect', i => {
             if (i.user.id === interaction.user.id) {
                 if (i.customId === "pursue") {
 
@@ -60,24 +59,8 @@ module.exports = {
                         charge: '1' // <-- 0 means no charge, 1 means charge
                     }
 
-
-                    /*
-                        Rendering message
-                    */
-
-                    let msg;
-
-                    // Setting the positioning of the players
-                    msg = `🧑‍🚀${n}${n}${n}${n}${n}🛸${n}${n}${n}`;
-
-                    // Adding in the HP on the second line (hearts representing the health) | HP should be 4 at the start of the game
-                    msg = msg + `\n` + `❤️`.repeat(userGameStats.hp) + `${n}${n}` + `❤️`.repeat(enemyGameStats.hp);
-
-                    // Getting the charge of the enemies/user and rendering it
-                    msg = msg + `\n` + `${userGameStats.charge}${n}${n}${n}${n}${n}${enemyGameStats.charge}`;
-                    msg.replace("0", "\u200b");
-                    msg.replace("1", "🔋");
-
+                    // Render the environment
+                    let render = await this.render(userGameStats, enemyGameStats);
 
                     // Creating an embed for the story ark
                     let arkEmb = {
@@ -110,11 +93,8 @@ module.exports = {
                         ]
                     };
 
-                    interaction.followUp({ embeds: [arkEmb], components: [actionRow], content: msg });
-
-
-                    
-
+                    interaction.followUp({ embeds: [arkEmb] });
+                    interaction.followUp({ content: render, components: [actionRow] });
 
                 } else if (i.customId === 'cancel') {
                     // Reply if the user cancels the interaction
@@ -127,12 +107,40 @@ module.exports = {
                     return;
                 }
 
+                if (i.customId == 'shoot' || i.customId == 'recharge' || i.customId == 'shield') {
+                    this.doAction(interaction, i.customId, userGameStats, enemyGameStats);
+                }
+
             } else {
                 // "This button is not for you" -- Send this when a user clicks a button on a msg that they did not begin
                 i.reply({ embeds: [{ color: client.utils.resolveColor(client.config.colors.invis), description: client.config.deny.button }], ephemeral: true });
             }
         });
 
+    },
+
+    async render(userGameStats, enemyGameStats) {
+        // This is a "blank", an emoji that is invisible
+        const n = "<:blank:1004637804619374653>";
+
+        let render;
+
+        // Setting the positioning of the players
+        render = `🧑‍🚀${n}${n}${n}${n}${n}🛸${n}${n}${n}`;
+
+        // Adding in the HP on the second line (hearts representing the health) | HP should be 4 at the start of the game
+        render = render + `\n` + `❤️`.repeat(userGameStats.hp) + `${n}${n}` + `❤️`.repeat(enemyGameStats.hp);
+
+        // Getting the charge of the enemies/user and rendering it
+        render = render + `\n` + `${userGameStats.charge}${n}${n}${n}${n}${n}${enemyGameStats.charge}`;
+        render.replace("0", "\u200b");
+        render.replace("1", "🔋");
+
+        return render;
+    },
+
+    async doAction (interaction, action, userGameStats, enemyGameStats) {
+        
     }
 
 }
