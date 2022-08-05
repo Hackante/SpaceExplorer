@@ -38,7 +38,7 @@ module.exports = {
 
         const collector = interaction.createMessageComponentCollector({ componentType: ComponentType.Button, time: 15000 });
 
-        collector.on('collect', i => {
+        collector.on('collect', async i => {
             if (i.user.id === interaction.user.id) {
                 if (i.customId === "pursue") {
 
