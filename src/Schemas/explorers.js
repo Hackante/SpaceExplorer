@@ -3,6 +3,17 @@ const { Schema, model } = require("mongoose");
 const schema = new Schema({
     user: { type: String, required: true, unique: true }, // Discord User ID
     blacklisted: { type: Boolean, default: false },
+    xp: { type: Number, default: 0 },
+    level: { type: Number, default: 1 },
+    inventory: {
+        coins: { type: Number, default: 0 },
+        items: { type: Array, default: [] },
+        materials: {
+            iron: { type: Number, default: 0 },
+            copper: { type: Number, default: 0 },
+            silver: { type: Number, default: 0 },
+        }
+    },
     statistics: {
         joined: { type: Date, default: new Date() },
         commandsUsed: { type: Number, default: 0 },
