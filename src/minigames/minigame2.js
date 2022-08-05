@@ -5,7 +5,7 @@ const { ComponentType } = require("discord.js");
 let actionCollector;
 
 module.exports = {
-    async start(client, interaction) {
+    async run(client, interaction) {
         interaction.deferReply();
 
         // Creating a mission embed
@@ -42,9 +42,11 @@ module.exports = {
             if (i.user.id === interaction.user.id) {
                 if (i.customId === "pursue") {
 
+                    /*
                     // Disable both buttons since we no longer require them
                     confirmRow.components[0].setDisabled(true);
                     confirmRow.components[1].setDisabled(true);
+                    */
 
                     // Create objects for each player, in this case, the user and the enemy
                     let userGameStats = {
@@ -93,12 +95,12 @@ module.exports = {
                         ]
                     };
 
-                    interaction.followUp({ embeds: [arkEmb] });
-                    interaction.followUp({ content: render, components: [actionRow] });
+                    i.followUp({ embeds: [arkEmb] });
+                    i.followUp({ content: render, components: [actionRow] });
 
                 } else if (i.customId === 'cancel') {
                     // Reply if the user cancels the interaction
-                    interaction.reply({ embeds: [{ color: client.utils.resolveColor(client.config.colors.invis), description: client.config.mission.cancel }] });
+                    i.reply({ embeds: [{ color: client.utils.resolveColor(client.config.colors.invis), description: client.config.mission.cancel }] });
 
                     // Disable both buttons
                     confirmRow.components[0].setDisabled(true);
@@ -108,7 +110,7 @@ module.exports = {
                 }
 
                 if (i.customId == 'shoot' || i.customId == 'recharge' || i.customId == 'shield') {
-                    this.doAction(interaction, i.customId, userGameStats, enemyGameStats);
+                    this.doAction(i, i.customId, userGameStats, enemyGameStats);
                 }
 
             } else {
@@ -139,8 +141,47 @@ module.exports = {
         return render;
     },
 
-    async doAction (interaction, action, userGameStats, enemyGameStats) {
-        
+    async doAction(i, action, userGameStats, enemyGameStats) {
+        let enemyAction = await this.getAction(i, action, userGameStats, enemyGameStats)
+        // When a user does an action
+        switch (action) {
+            case "shoot":
+                if (userGameStats.charge == 0) {
+                    i.reply ({ content: "❌ You do not have enough charge to run this command", ephemeral: true })
+                    return;
+                }
+
+                userGameStats.charge = 0;
+
+                break;
+
+            case "recharge":
+                if (userGameStats.charge == 1) {
+                    // Say "you already have full charge"
+                    return;
+                }
+
+                userGameStats.charge = 1;
+
+                break;
+
+            case "shield":
+                //
+                break;
+        }
+    },
+
+    async getAction(i, action, userGameStats, enemyGameStats) {
+        let action;
+        if (enemyGameStats.charge == 0) {
+            action = 'recharge';
+        } else if (enemyGameStats.charge == 1) {
+            action = 'shoot';
+        } else {
+            action = 'shield';
+        }
+
+        return action;
     }
 
 }
