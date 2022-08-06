@@ -1,3 +1,4 @@
+const { ActionRow, ButtonBuilder } = require("discord.js");
 const explorers = require("./Schemas/explorers");
 
 module.exports = class Util {
@@ -9,18 +10,18 @@ module.exports = class Util {
     // Add XP to a user and check it for level up
     static async addXP(userID, xp) {
         let explorer = await explorers.findOne({ user: userID });
-        if(!explorer) explorer = await explorers.create({ user: userID });
+        if (!explorer) explorer = await explorers.create({ user: userID });
         explorer.xp += xp;
         // linear level up till level 5 then exponential
-        switch(explorer.level <= 5){
+        switch (explorer.level <= 5) {
             case true:
-                if(explorer.xp >= (explorer.level * 50)){
+                if (explorer.xp >= (explorer.level * 50)) {
                     explorer.xp -= (explorer.level * 50);
                     explorer.level++;
                 }
                 break;
             case false:
-                if(explorer.xp >= (Math.pow(explorer.level, 2) * 10)){
+                if (explorer.xp >= (Math.pow(explorer.level, 2) * 10)) {
                     explorer.xp -= (Math.pow(explorer.level, 2) * 10);
                     explorer.level++;
                 }
@@ -28,5 +29,17 @@ module.exports = class Util {
         }
         explorer.save();
         return false;
+    }
+
+    // Disable all buttons from  message
+    static disableButtons(message) {
+        let buttons = [];
+        message.components.forEach((actionRow, i) => {
+            buttons.push(ActionRow.from(actionRow));
+            actionRow.components.forEach(button => {
+                buttons[i].components.push(ButtonBuilder.from(button).setDisable());
+            });
+        });
+        message.edit({components: buttons});
     }
 }
