@@ -151,7 +151,13 @@ module.exports = {
                     return;
                 }
 
-                userGameStats.charge = 0;
+                enemyGameStats.hp = enemyGameStats.hp - 1;
+
+                if (enemyGameStats.hp < 1) {
+                    // Game over
+                    this.getResults(i, userGameStats, enemyGameStats);
+                    return;
+                }
 
                 break;
 
@@ -182,6 +188,10 @@ module.exports = {
         }
 
         return action;
+    },
+
+    async getResults() {
+
     }
 
 }
