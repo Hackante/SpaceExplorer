@@ -1,3 +1,5 @@
+const explorers = require("../Schemas/explorers");
+
 module.exports = {
     async start(client, interaction) {
         await interaction.deferReply();
@@ -8,6 +10,7 @@ module.exports = {
             description: `You came across an asteroid field! Navigate through the obstacles using the buttons below 🚀!\nStarting in 5 seconds...\n<t:${Math.floor(new Date().setUTCSeconds(new Date().getUTCSeconds() + 5) / 1000)}:R>`,
         }
         let reply = await interaction.editReply({ embeds: [missionEmb] });
+        let coll = reply.createMessageComponentCollector();
         await new Promise(resolve => setTimeout(resolve, 5_000));
 
         // Get a random integer
@@ -65,10 +68,10 @@ module.exports = {
         let ticker = setInterval(() => {
             let currentY = matrix.findIndex(row => row.includes('🚀'));
             let currentX = matrix[currentY].findIndex(cell => cell === '🚀');
-            if(currentY === 0) {
-                interaction.editReply({ components: []})
-                interaction.followUp({ content: "You won!" });
+            if (currentY === 0) {
+                interaction.editReply({ components: [] })
                 clearInterval(ticker);
+                coll.stop("win");
                 return;
             }
             matrix[currentY][currentX] = '<:blank:1004637804619374653>';
@@ -77,11 +80,10 @@ module.exports = {
             interaction.editReply({ embeds: [createEmbed()], components: [createButtons(currentX)] });
             let out = matrixToString();
             if (out.includes('🤯')) {
-                console.log("failed");
-                interaction.editReply({ components: []})
-                interaction.followUp({ content: "You failed!" });
+                interaction.editReply({ components: [] })
                 // stop the interval
                 clearInterval(ticker);
+                coll.stop("failed");
             }
         }, 500);
 
@@ -107,10 +109,9 @@ module.exports = {
             }
         }
 
-        let coll = reply.createMessageComponentCollector()
         coll.on('collect', async (b) => {
             console.log(b.customId);
-            if(!interaction.user.id == b.user.id) return b.reply({content: interaction.i18n('deny.button')});
+            if (!interaction.user.id == b.user.id) return b.reply({ content: interaction.i18n('deny.button') });
             let x = parseInt(b.customId.split('-')[1]);
             let currentY = matrix.findIndex(row => row.includes('🚀'));
             let currentX = matrix[currentY].findIndex(cell => cell === '🚀');
@@ -119,12 +120,30 @@ module.exports = {
             b.update({ embeds: [createEmbed()], components: [createButtons(x)] });
             let out = matrixToString();
             if (out.includes('🤯')) {
-                interaction.editReply({ components: []})
-                console.log("failed");
-                // stop the interval
+                interaction.editReply({ components: [] })
                 clearInterval(ticker);
-                coll.stop();
+                coll.stop("failed");
             }
+        });
+        coll.on('end', async (coll, r) => {
+            let update = { iron: 0, copper: 0, silver: 0 };
+            if (r === 'failed') {
+                update.iron = interaction.explorer.level * 5 + Math.floor(Math.random() * (10 + 5) - 5);
+                update.copper = interaction.explorer.level * 3 + Math.floor(Math.random() * (5 + 2) - 3);
+                update.silver = interaction.explorer.level * 3 + Math.floor(Math.random() * (5 + 2) - 3);
+                interaction.followUp({ content: `You failed! You still got some rewards for your effort: ` });
+            } else {
+                update.iron = interaction.explorer.level * 10 + Math.floor(Math.random() * (15 + 5) - 5);
+                update.copper = interaction.explorer.level * 5 + Math.floor(Math.random() * (10 + 2) - 3);
+                update.silver = interaction.explorer.level * 5 + Math.floor(Math.random() * (10 + 2) - 3);
+                interaction.followUp({ content: `You won! Here are your rewards:\nIron: ${update.iron}\nCopper: ${update.copper}\nSilver: ${update.silver}` });
+            }
+            let u = {}
+            for (let key in update) {
+                u[`inventory.materials.${key}`] = update[key];
+            }
+            await explorers.updateOne({ userId: interaction.user.id }, { $inc: {...u, "inventory.credits": r == "failed" ? 50 : 100}, $set: { "missions.lastDiscovery": Date.now(), "missions.discActive": false } });
+            client.utils.addXP(interaction.user.id, r == "failed" ? 25 : 50);
         });
     }
 

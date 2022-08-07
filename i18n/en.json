@@ -10,7 +10,8 @@
         "notReady": "❌ You can only complete a discovery mission every 12 hours. Your next mission is available at <t:{time}:t>.",
         "expActive": "❌ Your Robo is already on an exploration. It returns at <t:{time}:t>.",
         "expStart": "🔍 You have started an exploration. Your Robo will return at <t:{time}:t>.",
-        "expInactive": "🔍 You havn't started an exploration. Start one using `/exploration start`"
+        "expInactive": "🔍 You havn't started an exploration. Start one using `/exploration start`",
+        "discActive": "❌ You have already started a discovery."
     },
     "inventory": {
         "noExplorer": "❌ Unable to find that explorer. Are you sure they are in the SpaceExplorerForce?"
