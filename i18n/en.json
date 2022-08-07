@@ -15,8 +15,8 @@
     "inventory": {
         "noExplorer": "❌ Unable to find that explorer. Are you sure they are in the SpaceExplorerForce?"
     },
-    "upgrades": {
-        "noMaterials": "❌ You don't have enough materials to upgrade your Robo.\nIron: {iron}\nCopper: {copper}\nSilver: {silver}",
+    "upgrade": {
+        "noMaterials": "❌ You don't have enough materials to upgrade your Robo.",
         "success": "🎉 You have successfully upgraded your Robo to level {level}!",
         "cancel": "Upgrade cancelled."
     }

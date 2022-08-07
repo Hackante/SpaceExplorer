@@ -1,8 +1,6 @@
 const { XMLHttpRequest } = require("xmlhttprequest");
 const { get } = require("request");
-const { writeFileSync } = require("fs")
 const explorers = require("../../Schemas/explorers");
-const { client } = require("../..");
 
 function getRandomDate(roboLevel) {
     let minutes = roboLevel * 10 + Math.floor(Math.random() * (3 + 2) - 2);
@@ -193,7 +191,7 @@ module.exports = {
                     await explorers.updateOne({ user: interaction.user.id }, { $set: { "missions.expActive": true, "missions.expEnd": date } });
                     await interaction.editReply({ content: interaction.i18n("mission.expStart", { time: Math.floor(date.getTime() / 1000) }) });
                 }
-                return;
+                break;
             } case "results": {
                 // Check if robo is on mission
                 if (!interaction.explorer.missions.expActive) {
@@ -207,7 +205,7 @@ module.exports = {
                 }
 
                 simulateResults(interaction.explorer.robo.level, async (res) => {
-                    res.message = { ...res.message, components: [{ type: 1, components: [{ type: 3, style: 2, label: "Claim", custom_id: "notImportant" }] }] };
+                    res.message = { ...res.message, components: [{ type: 1, components: [{ type: 2, style: 3, label: "Claim", custom_id: "notImportant" }] }] };
                     let reply = await interaction.editReply(res.message);
                     let coll = reply.createMessageComponentCollector({ time: 15_000 });
                     coll.on("collect", async (m) => {
@@ -225,6 +223,7 @@ module.exports = {
                 });
                 break;
             }
+            return;
         }
     }
 }
