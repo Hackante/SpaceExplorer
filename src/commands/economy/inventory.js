@@ -33,7 +33,7 @@ module.exports = {
                 { name: "Robo Level", value: explorer.robo.level.toString(), inline: false },
             ],
             thumbnail: {
-                url: user.avatarURL()
+                url: user.displayAvatarURL()
             },
         }
         interaction.reply({embeds: [embed]});

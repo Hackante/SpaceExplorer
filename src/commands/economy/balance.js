@@ -1,3 +1,5 @@
+const explorers = require("../../Schemas/explorers");
+
 module.exports = {
     object: {
         name: "balance",
@@ -22,7 +24,7 @@ module.exports = {
             title: "Balance",
             description: `${user} currently has ${explorer.inventory.credits} credits.`,
             thumbnail: {
-                url: user.avatarURL()
+                url: user.displayAvatarURL()
             },
         }
         interaction.reply({embeds: [embed]});

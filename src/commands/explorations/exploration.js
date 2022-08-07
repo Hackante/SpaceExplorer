@@ -207,7 +207,7 @@ module.exports = {
                 }
 
                 simulateResults(interaction.explorer.robo.level, async (res) => {
-                    res.message = { ...res.message, components: [{ type: 1, components: [{ type: 2, style: 2, label: "Claim", custom_id: "notImportant" }] }] };
+                    res.message = { ...res.message, components: [{ type: 1, components: [{ type: 3, style: 2, label: "Claim", custom_id: "notImportant" }] }] };
                     let reply = await interaction.editReply(res.message);
                     let coll = reply.createMessageComponentCollector({ time: 15_000 });
                     coll.on("collect", async (m) => {
