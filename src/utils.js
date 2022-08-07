@@ -1,9 +1,8 @@
-const { ActionRow } = require("discord.js");
 const explorers = require("./Schemas/explorers");
 
 module.exports = class Util {
     // Resolve a color from Hex to number
-    static recolveColor(color) {
+    static resolveColor(color) {
         return parseInt(color.replace("#", ""), 16);
     }
 
