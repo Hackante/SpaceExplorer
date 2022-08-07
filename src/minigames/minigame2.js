@@ -42,12 +42,6 @@ module.exports = {
             if (i.user.id === interaction.user.id) {
                 if (i.customId === "pursue") {
 
-                    /*
-                    // Disable both buttons since we no longer require them
-                    confirmRow.components[0].setDisabled(true);
-                    confirmRow.components[1].setDisabled(true);
-                    */
-
                     // Create objects for each player, in this case, the user and the enemy
                     let userGameStats = {
                         hp: '4',
