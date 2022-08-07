@@ -16,6 +16,7 @@ module.exports = {
             return;
         }
         try {
+            let missions = require("../../minigames/");
             missions[Math.floor(Math.random() * missions.length)].start(client, interaction);
         } catch (e) {
             console.log(e);
