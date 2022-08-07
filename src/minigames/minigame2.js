@@ -42,12 +42,6 @@ module.exports = {
             if (i.user.id === interaction.user.id) {
                 if (i.customId === "pursue") {
 
-                    /*
-                    // Disable both buttons since we no longer require them
-                    confirmRow.components[0].setDisabled(true);
-                    confirmRow.components[1].setDisabled(true);
-                    */
-
                     // Create objects for each player, in this case, the user and the enemy
                     let userGameStats = {
                         hp: '4',
@@ -151,7 +145,13 @@ module.exports = {
                     return;
                 }
 
-                userGameStats.charge = 0;
+                enemyGameStats.hp = enemyGameStats.hp - 1;
+
+                if (enemyGameStats.hp < 1) {
+                    // Game over
+                    this.getResults(i, userGameStats, enemyGameStats);
+                    return;
+                }
 
                 break;
 
@@ -182,6 +182,10 @@ module.exports = {
         }
 
         return action;
+    },
+
+    async getResults() {
+
     }
 
 }
