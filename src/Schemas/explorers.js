@@ -6,7 +6,7 @@ const schema = new Schema({
     xp: { type: Number, default: 0 },
     level: { type: Number, default: 1 },
     inventory: {
-        coins: { type: Number, default: 0 },
+        credits: { type: Number, default: 0 },
         items: { type: Array, default: [] },
         materials: {
             iron: { type: Number, default: 0 },

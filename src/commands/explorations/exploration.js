@@ -11,10 +11,10 @@ function getRandomDate(roboLevel) {
     return date;
 }
 
-async function simulateResults(roboLevel) {
-    console.log(`Simulating results for Robo Level ${roboLevel}`);
-    let type = ["Planet", "Asteroid", "Moon"][Math.floor(Math.random() * 3)];
+async function simulateResults(roboLevel, addStuff) {
+    let type = ["Asteroid", "Moon"][Math.floor(Math.random() * 2)];
     switch (type) {
+        // Planet will be added later due to too many errors
         case "Planet": {
             // Use the Planet API from API Ninjas
             get({
@@ -23,6 +23,7 @@ async function simulateResults(roboLevel) {
                     "X-Api-Key": process.env.APININJA
                 }
             }, function (err, res, body) {
+                let ret = {};
                 if (err) {
                     console.error(err);
                     let material1 = ["Iron"][Math.floor(Math.random() * 1)];
@@ -35,7 +36,7 @@ async function simulateResults(roboLevel) {
                         description: "Your Robo almost found a planet. The SpaceExplorationForce thanked you with a small reward:",
                         fields: [{ name: "Materials", value: `${material1}: +${value1}\n${material2}: +${value2}`, inline: false }],
                     }
-                    return { message: { content: "We are sorry for not returning an existing planet. We had some issues with the API.", embeds: [embed] }, update: { $inc: { [`robo.${roboLevel}.materials.${material1}`]: value1, [`robo.${roboLevel}.materials.${material2}`]: value2 } }, xp: Math.floor(Math.random() * (roboLevel / 2 + 25) + 25) };
+                    ret = { message: { content: "We are sorry for not returning an existing planet. We had some issues with the API.", embeds: [embed] }, update: { $inc: { [`robo.${roboLevel}.materials.${material1}`]: value1, [`robo.${roboLevel}.materials.${material2}`]: value2 } }, xp: Math.floor(Math.random() * (roboLevel / 2 + 25) + 25) };
                 } else {
                     if (res.statusCode != 200) {
                         console.error("Error:" + res.statusCode, body.toString("utf8"));
@@ -52,7 +53,7 @@ async function simulateResults(roboLevel) {
                             description: "Your Robo almost found a planet. The SpaceExplorationForce thanked you with a small reward:",
                             fields: [{ name: "Materials", value: `${material1}: +${value1}\n${material2}: +${value2}`, inline: false }],
                         }
-                        return { message: { content: "We are sorry for not returning an existing planet. We had some issues with the API.", embeds: [embed] }, update: { $inc: { [`robo.${roboLevel}.materials.${material1}`]: value1, [`robo.${roboLevel}.materials.${material2}`]: value2 } }, xp: Math.floor(Math.random() * (roboLevel / 2 + 25) + 25) };
+                        ret = { message: { content: "We are sorry for not returning an existing planet. We had some issues with the API.", embeds: [embed] }, update: { $inc: { [`robo.${roboLevel}.materials.${material1}`]: value1, [`robo.${roboLevel}.materials.${material2}`]: value2 } }, xp: Math.floor(Math.random() * (roboLevel / 2 + 25) + 25) };
                     }
                     let material1 = ["Iron"][Math.floor(Math.random() * 1)];
                     let value1 = roboLevel * 15 + Math.floor(Math.random() * (10 + 5) - 5);
@@ -75,8 +76,9 @@ async function simulateResults(roboLevel) {
                             text: "All Data is provided by API Ninjas' Planet API. We do not own any of the data and do not guarantee its accuracy."
                         }
                     }
-                    return { message: { embeds: [embed] }, update: { $inc: { [`inventory.materials.${material1}`]: value1, [`inventory.materials.${material2}`]: value2 } }, xp: Math.floor(Math.random() * (roboLevel / 2 + 25) + 25) };
+                    ret = { message: { embeds: [embed] }, update: { $inc: { [`inventory.materials.${material1}`]: value1, [`inventory.materials.${material2}`]: value2 } }, xp: Math.floor(Math.random() * (roboLevel / 2 + 25) + 25) };
                 }
+                addStuff(ret);
             }).callback();
             break;
         } case "Asteroid": {
@@ -112,7 +114,8 @@ async function simulateResults(roboLevel) {
                     text: "All data is provided by NASA's NeoWs API. We do not own any of the data and do not guarantee its accuracy.",
                 }
             }
-            return { message: { embeds: [embed] }, update: { $inc: { [`inventory.materials.${material1}`]: value1, [`inventory.materials.${material2}`]: value2 } }, xp: Math.floor(Math.random() * (roboLevel / 2 + 15) + 15) };
+            addStuff({ message: { embeds: [embed] }, update: { $inc: { [`inventory.materials.${material1.toLowerCase()}`]: value1, [`inventory.materials.${material2.toLowerCase()}`]: value2 } }, xp: Math.floor(Math.random() * (roboLevel / 2 + 15) + 15) });
+            break;
         } case "Moon": {
             // Using the Solar System API to get a random moon
             let data = JSON.parse(require("child_process").execSync("curl https://api.le-systeme-solaire.net/rest.php/bodies?filter%5B%5D=bodyType%2Ceq%2CMoon").toString());
@@ -135,8 +138,8 @@ async function simulateResults(roboLevel) {
             let mass;
             let vol;
             for (let key in superscript) {
-                mass = moon?.mass?.massExponent ? `${moon?.mass?.massExponent}`?.replace(new RegExp(key, "g"), superscript[key]) : "";
-                vol = moon?.vol?.volExponent ? `${moon?.vol?.volExponent}`?.replace(new RegExp(key, "g"), superscript[key]) : "";
+                mass = moon?.mass?.massExponent ? `${moon?.mass?.massExponent}`?.toString()?.replace(new RegExp(key, "g"), superscript[key]) : "";
+                vol = moon?.vol?.volExponent ? `${moon?.vol?.volExponent}`?.toString()?.replace(new RegExp(key, "g"), superscript[key]) : "";
             }
 
             let embed = {
@@ -155,7 +158,8 @@ async function simulateResults(roboLevel) {
                     text: "All data is provided by the Solar System API. We do not own any of the data and do not guarantee its accuracy.",
                 }
             }
-            return { message: { embeds: [embed] }, update: { $inc: { [`inventory.materials.${material1}`]: value1 } }, xp: Math.floor(Math.random() * (roboLevel / 2 + 10) + 10) };
+            addStuff({ message: { embeds: [embed] }, update: { $inc: { [`inventory.materials.${material1.toLowerCase()}`]: value1 } }, xp: Math.floor(Math.random() * (roboLevel / 2 + 10) + 10) });
+            break;
         }
     }
 }
@@ -202,18 +206,22 @@ module.exports = {
                     return;
                 }
 
-                let res = await simulateResults(interaction.explorer.robo.level);
-                res.message = {...res.message, components: [{ type: 1, components: [{type: 2, style: 2, label: "Claim", custom_id: "notImportant"}]}]};
-                let reply = await interaction.editReply(res.message);
-                let coll = reply.createMessageComponentCollector({ time: 15_000 });
-                coll.on("collect", async (m) => {
-                    if (!interaction.user.id == m.user.id) return interaction.editReply({ content: "This is not your Exploration!", ephemeral: true });
-                    res.update = { ...res.update, $set: { "missions.expActive": false, "missions.expEnd": null } };
-                    await explorers.updateOne({ user: interaction.user.id }, res.update);
-                    client.utils.addXP(interaction.user.id, res.xp)
-                    await m.update({ content: "Claimed" });
-                    client.utils.disableButtons(reply);
-                    coll.stop();
+                simulateResults(interaction.explorer.robo.level, async (res) => {
+                    res.message = { ...res.message, components: [{ type: 1, components: [{ type: 2, style: 2, label: "Claim", custom_id: "notImportant" }] }] };
+                    let reply = await interaction.editReply(res.message);
+                    let coll = reply.createMessageComponentCollector({ time: 15_000 });
+                    coll.on("collect", async (m) => {
+                        if (!interaction.user.id == m.user.id) return interaction.editReply({ content: "This is not your Exploration!", ephemeral: true });
+                        res.update = Object.assign(res.update, { $set: { "missions.expActive": false } });
+                        console.log(res.update);
+                        await explorers.updateOne({ user: interaction.user.id }, res.update);
+                        client.utils.addXP(interaction.user.id, res.xp)
+                        await m.update({ content: "Claimed" });
+                        coll.stop();
+                    });
+                    coll.on("end", async () => {
+                        await interaction.editReply({ components: [] });
+                    });
                 });
                 break;
             }

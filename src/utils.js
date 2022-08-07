@@ -1,4 +1,4 @@
-const { ActionRow, ButtonBuilder } = require("discord.js");
+const { ActionRow } = require("discord.js");
 const explorers = require("./Schemas/explorers");
 
 module.exports = class Util {
@@ -29,17 +29,5 @@ module.exports = class Util {
         }
         explorer.save();
         return false;
-    }
-
-    // Disable all buttons from  message
-    static disableButtons(message) {
-        let buttons = [];
-        message.components.forEach((actionRow, i) => {
-            buttons.push(ActionRow.from(actionRow));
-            actionRow.components.forEach(button => {
-                buttons[i].components.push(ButtonBuilder.from(button).setDisable());
-            });
-        });
-        message.edit({components: buttons});
     }
 }
