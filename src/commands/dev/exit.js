@@ -6,6 +6,6 @@ module.exports = {
     devOnly: true,
     run: async function (interaction, client) {
         await interaction.reply({ content: "Shutting down" });
-        process.exit(0);
+        client.destroy();
     }
 }
