@@ -110,7 +110,6 @@ module.exports = {
         }
 
         coll.on('collect', async (b) => {
-            console.log(b.customId);
             if (!interaction.user.id == b.user.id) return b.reply({ content: interaction.i18n('deny.button') });
             let x = parseInt(b.customId.split('-')[1]);
             let currentY = matrix.findIndex(row => row.includes('🚀'));
@@ -131,7 +130,7 @@ module.exports = {
                 update.iron = interaction.explorer.level * 5 + Math.floor(Math.random() * (10 + 5) - 5);
                 update.copper = interaction.explorer.level * 3 + Math.floor(Math.random() * (5 + 2) - 3);
                 update.silver = interaction.explorer.level * 3 + Math.floor(Math.random() * (5 + 2) - 3);
-                interaction.followUp({ content: `You failed! You still got some rewards for your effort: ` });
+                interaction.followUp({ content: `You failed! You still got some rewards for your effort:\nIron: ${update.iron}\nCopper: ${update.copper}\nSilver: ${update.silver}` });
             } else {
                 update.iron = interaction.explorer.level * 10 + Math.floor(Math.random() * (15 + 5) - 5);
                 update.copper = interaction.explorer.level * 5 + Math.floor(Math.random() * (10 + 2) - 3);

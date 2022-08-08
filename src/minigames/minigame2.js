@@ -1,14 +1,112 @@
-// Sorry for the messy code my friend(s) D:
-// I rushed this so hard lol :o
-
-const { ComponentType, createMessageComponentCollector, MessageEmbed } = require("discord.js");
-const { start } = require("./minigame1");
-
-let actionRow;
-let collector;
+const explorers = require("../Schemas/explorers");
 
 module.exports = {
     async start(client, interaction) {
+
+        // Declare a player and a computer player object that contain the properties hp, action, shield and charge
+        var player = {
+            hp: 4,
+            action: "",
+            shield: false,
+            charge: 0
+        }
+        var computer = {
+            hp: 4,
+            action: "",
+            shield: false,
+            charge: 1
+        }
+
+        // Set the actions for player and random for computer
+        function setAction(playerAct) {
+            player.shield = false;
+            computer.shield = false;
+
+            player.action = playerAct;
+            computer.action = ["shoot", "shield", "charge"][Math.floor(Math.random() * 3)];
+            if (computer.action == "shoot" && computer.charge <= 0) {
+                computer.action = ["shield", "charge"][Math.floor(Math.random() * 2)];
+            }
+            if (computer.action == "charge" && computer.charge >= 1) {
+                computer.action = ["shield", "shoot"][Math.floor(Math.random() * 2)];
+            }
+
+            // Player actions in own object
+            switch (player.action) {
+                case "charge":
+                    player.charge++;
+                    break;
+                case "shield":
+                    player.shield = true;
+                    break;
+                case "shoot":
+                    player.charge--;
+                    break;
+            }
+            // Computer actions in own object
+            switch (computer.action) {
+                case "charge":
+                    computer.charge++;
+                    break;
+                case "shield":
+                    computer.shield = true;
+                    break;
+                case "shoot":
+                    computer.charge--;
+            }
+        }
+
+        // Check for attacks
+        function checkAttack() {
+            if (player.action == "shoot" && !computer.shield) {
+                computer.hp--;
+            }
+            if (computer.action == "shoot" && !player.shield) {
+                player.hp--;
+            }
+        }
+
+        // Create the UI
+        function renderF() {
+            let n = "<:blank:1004637804619374653>";
+            let p = "🧑‍🚀";
+            let c = "🛸";
+
+            let playerHp = "";
+            let computerHp = "";
+
+            for (let i = 0; i < 4; i++) {
+                if (i < player.hp) playerHp += "❤️";
+                else playerHp += "🤍";
+            }
+            for (let i = 0; i < 4; i++) {
+                if (i < computer.hp) computerHp += "❤️";
+                else computerHp += "🤍";
+            }
+            // charge number
+            let playerCharge = player.charge > 0 ? "🔋" : n;
+            let computerCharge = computer.charge > 0 ? "🔋" : n;
+
+            // action
+            let playerAction = "";
+            let computerAction = "";
+
+            if (player.action == "shoot") playerAction = "🔫";
+            else if (player.action == "shield") playerAction = "🛡";
+            else if (player.action == "charge") playerAction = "🔋";
+
+            if (computer.action == "shoot") computerAction = "🔫";
+            else if (computer.action == "shield") computerAction = "🛡";
+            else if (computer.action == "charge") computerAction = "🔋";
+
+            let rows = [
+                `${p}${n + n + n + n + n}${c}`,
+                playerHp + n + n + computerHp,
+                playerCharge + n + n + n + n + n + computerCharge,
+                playerAction + n + n + n + n + n + computerAction,
+            ];
+            return rows.join("\n");
+        }
 
         actionRow = {
             "type": 1,
@@ -17,46 +115,70 @@ module.exports = {
                     "type": 2,
                     "label": "Shoot",
                     "style": 4,
-                    "custom_id": "shoot"
+                    "custom_id": "shoot",
+                    "disabled": true,
                 },
                 {
                     "type": 2,
                     "label": "Recharge",
                     "style": 1,
-                    "custom_id": "recharge"
+                    "custom_id": "charge",
+                    "disabled": false,
                 },
                 {
                     "type": 2,
                     "label": "Shield",
                     "style": 2,
-                    "custom_id": "shield"
+                    "custom_id": "shield",
+                    "disabled": false,
                 }
             ]
         };
 
-        let userGameStats = {
-            hp: '4',
-            action: undefined,
-            charge: '0', // <-- 0 means no charge, 1 means charge
-            shield: false
-        }
+        // function to run the game
+        function runGame(game, collector) {
+            collector.on("collect", async (b) => {
+                if (interaction.user.id != b.user.id) return interaction.reply({ content: interaction.i18n("deny.button"), ephemeral: true });
+                setAction(b.customId);
+                checkAttack();
+                actionRow.components[0].disabled = player.charge <= 0;
+                actionRow.components[1].disabled = player.charge == 1;
+                await b.update({ content: renderF(), components: [actionRow] });
+                // Check if the game is over
+                if (player.hp <= 0 || computer.hp <= 0) {
+                    collector.stop("game over");
+                    let res = player.hp <= 0 ? (computer.hp <= 0 ? "Tie" : "Computer") : "Player";
+                    let credits = player.hp * 50 + 15;
+                    let iron = player.hp * Math.floor(Math.random() * (10 - 5) + 5) + 5;
+                    let copper = player.hp * Math.floor(Math.random() * (5 - 3) + 3) + 3;
+                    let silver = player.hp * Math.floor(Math.random() * (3 - 3) + 3) + 3;
+                    let xp = res == "Player" ? 50 : (res == "Tie" ? 35 : 25);
+                    let embed = {
+                        "title": `Game Over - ${res == "Tie" ? "Tie!" : res.replace("Computer", "Enemy").replace("Player", "You") + " won!"}`,
+                        "description": `You got ${credits} credits, ${iron} iron, ${copper} copper, ${silver} silver and ${xp} xp.`,
+                        "color": res == "Player" ? 0x00ff00 : 0xff0000,
+                    }
+                    b.followUp({ embeds: [embed] });
+                    client.utils.addXP(interaction.user.id, xp);
+                    explorers.updateOne({ userId: interaction.user.id }, { $inc: { "inventory.credits": credits, "inventory.materials.iron": iron, "inventory.materials.copper": copper, "inventory.materials.silver": silver } });
+                }
+            });
+            collector.on("end", async (collected, reason) => {
+                actionRow.components[0].disabled = true;
+                actionRow.components[1].disabled = true;
+                actionRow.components[2].disabled = true;
+                game.edit({ components: [actionRow] });
+            })
 
-        let enemyGameStats = {
-            hp: '4',
-            action: undefined,
-            charge: '1', // <-- 0 means no charge, 1 means charge
-            shield: false
         }
 
         // Creating a mission embed
-        console.log("Creating mission embed");
         let missionEmb = {
             color: client.utils.resolveColor(client.config.colors.invis),
             description: `‍🚀 An enemy spaceship has been destroying cargo ships in D sector. We need someone to look into it and take care of the intruder.`,
         }
 
         // We will send this when a user first triggers the commnad
-        console.log("Creating confirmation row");
         let confirmRow = {
             "type": 1,
             "components": [
@@ -64,195 +186,61 @@ module.exports = {
                     "type": 2,
                     "label": "Look into it",
                     "style": 1,
-                    "custom_id": "pursue"
+                    "custom_id": "pursue",
+                    "disabled": false
                 },
                 {
                     "type": 2,
                     "emoji": "❌",
                     "style": 1,
-                    "custom_id": "cancel"
+                    "custom_id": "cancel",
+                    "disabled": false
                 }
             ]
         };
 
-        console.log("Sending mission task");
-        await interaction.reply({ embeds: [missionEmb], components: [confirmRow] });
+        let conf = await interaction.reply({ embeds: [missionEmb], components: [confirmRow] });
+        let confColl = conf.createMessageComponentCollector();
+        setTimeout(() => {
+            if (confColl.ended) return;
+            confColl.stop("idle");
+        }, 15_000);
 
-        console.log("Making collector");
-        collector = interaction.channel.createMessageComponentCollector({ componentType: ComponentType.Button, time: 15000 });
+        confColl.on('collect', async i => {
+            if (i.user.id !== interaction.user.id) return i.reply({ embeds: [{ color: client.utils.resolveColor(client.config.colors.invis), description: client.config.deny.button }], ephemeral: true });
+            if (i.customId === "pursue") {
+                // render the environment
+                let render = renderF();
 
-        collector.on('collect', async i => {
-            if (i.user.id === interaction.user.id) {
-                if (i.customId === "pursue") {
-
-                    // Create objects for each player, in this case, the user and the enemy
-                    userGameStats = {
-                        hp: '4',
-                        action: undefined,
-                        charge: '0' // <-- 0 means no charge, 1 means charge
-                    }
-
-                    enemyGameStats = {
-                        hp: '4',
-                        action: undefined,
-                        charge: '1' // <-- 0 means no charge, 1 means charge
-                    }
-
-                    // Render the environment
-                    let render = await this.render(userGameStats, enemyGameStats);
-
-                    // Creating an embed for the story ark
-                    let arkEmb = {
-                        color: client.config.invisColor,
-                        description: `‍⚠️ Alert! Alert! Your radar scans have detected a nearby enemy spaceship armed and ready!`,
-                    }
-
-
-                    i.reply({ embeds: [arkEmb] });
-                    i.channel.send({ content: render, components: [actionRow] });
-
-                } else if (i.customId === 'cancel') {
-                    // Reply if the user cancels the interaction
-                    i.reply({ embeds: [{ color: client.utils.resolveColor(client.config.colors.invis), description: "Mission cancelled." }] });
-
-                    return;
+                // Creating an embed for the story ark
+                let arkEmb = {
+                    color: client.config.invisColor,
+                    description: `‍⚠️ Alert! Alert! Your radar scans have detected a nearby enemy spaceship armed and ready!`,
                 }
+                await i.reply({ embeds: [arkEmb] });
+                let game = await i.followUp({ content: render, components: [actionRow] });
+                let gameColl = game.createMessageComponentCollector({ idle: 15_000 });
+                runGame(game, gameColl);
+                confColl.stop("game started");
 
-                if (i.customId == 'shoot' || i.customId == 'recharge' || i.customId == 'shield') {
-                    this.doAction(i, i.customId, userGameStats, enemyGameStats);
-                }
-
-            } else {
-                // "This button is not for you" -- Send this when a user clicks a button on a msg that they did not begin
-                i.reply({ embeds: [{ color: client.utils.resolveColor(client.config.colors.invis), description: client.config.deny.button }], ephemeral: true });
+            } else if (i.customId === 'cancel') {
+                // Reply if the user cancels the interaction
+                i.reply({ embeds: [{ color: client.utils.resolveColor(client.config.colors.invis), description: "Mission cancelled." }] });
+                confirmRow.components[0].disabled = true;
+                confirmRow.components[1].disabled = true;
+                interaction.editReply({ components: [confirmRow] });
+                confColl.stop("cancelled");
+                return;
             }
         });
-
+        confColl.on('end', async (coll, reason) => {
+            confirmRow.components[0].disabled = true;
+            confirmRow.components[1].disabled = true;
+            interaction.editReply({ components: [confirmRow] });
+            if (reason === "cancelled" || reason === "idle") {
+                interaction.editReply({ content: "Mission cancelled." });
+                return;
+            }
+        });
     },
-
-    async render(userGameStats, enemyGameStats) {
-        // This is a "blank", an emoji that is invisible
-        const n = "<:blank:1004637804619374653>";
-
-        let render;
-
-        // Setting the positioning of the players
-        render = `🧑‍🚀${n}${n}${n}${n}${n}🛸${n}${n}${n}`;
-
-        // Adding in the HP on the second line (hearts representing the health) | HP should be 4 at the start of the game
-        render = render + `\n` + `❤️`.repeat(userGameStats.hp) + `${n}${n}` + `❤️`.repeat(enemyGameStats.hp);
-
-        // Getting the charge of the enemies/user and rendering it
-        render = render + `\n` + `${userGameStats.charge}${n}${n}${n}${n}${n}${enemyGameStats.charge}`;
-        render.replace("0", "\u200b");
-        render.replace("1", "🔋");
-
-        return render;
-    },
-
-    async doAction(i, action, userGameStats, enemyGameStats) {
-        let enemyAction = await this.getAction(i, action, userGameStats, enemyGameStats)
-        // When a user does an action
-        switch (action) {
-
-            case "shoot":
-                if (userGameStats.charge == 0) {
-                    i.reply({ content: "❌ You do not have enough charge to run this command", ephemeral: true });
-                    return;
-                }
-
-                if (enemyGameStats.shield == true) {
-                    i.reply({ content: "❌ The alien shieleded, you did not damage to him", ephemeral: true });
-                    return;
-                }
-
-                enemyGameStats.hp = enemyGameStats.hp - 1;
-                userGameStats.charge = 0;
-                i.reply({ content: "✅ You shot the intruder and dealt **one** heart", ephemeral: true })
-
-                if (enemyGameStats.hp < 1) {
-                    // Game over
-                    this.getResults(i, userGameStats, enemyGameStats);
-                    return;
-                }
-
-                break;
-
-            case "recharge":
-                if (userGameStats.charge == 1) {
-                    i.reply({ content: "❌ You already have full charge :D", ephemeral: true });
-                    return;
-                }
-
-                userGameStats.charge = 1;
-                i.reply({ content: "✅ You recharged successfully", ephemeral: true })
-
-                break;
-
-            case "shield":
-                i.reply({ content: "✅ You shielded successfully", ephemeral: true })
-                break;
-        }
-
-        i.channel.send("The alien used the action " + enemyAction);
-
-        switch (enemyAction) {
-            case "shoot":
-                if (userGameStats.shield = true) return console.log("Since you were shielded, they did not damage");
-                userGameStats.hp = parseInt(userGameStats.hp) - 1;
-                i.channel.send("You lost **one** heart");
-                enemyGameStats.charge = 0;
-                break;
-
-            case "recharge":
-                enemyGameStats.charge = '1';
-                i.channel.send("The alien gained one charge point");
-                break;
-
-            case "shield":
-                enemyGameStats.shield = true;
-                i.channel.send("The enemy shielded");
-                break;
-
-        }
-
-        console.log("Rendering...");
-        let render = await this.render(userGameStats, enemyGameStats);
-        console.log("Rendered");
-        i.channel.send({ content: render, components: [actionRow] });
-
-        console.log("Setting up collector");
-        try {
-            collector = i.channel.createMessageComponentCollector({ componentType: ComponentType.Button, time: 15000 });
-        } catch(err) {
-            console.log(err);
-        }
-
-    },
-
-    async getAction(i, action, userGameStats, enemyGameStats) {
-        let enemyAction;
-        if (enemyGameStats.charge == 0) {
-            enemyAction = 'recharge';
-            console.log("Enemy recharged");
-
-        } else if (enemyGameStats.charge == 1) {
-            enemyAction = 'shoot';
-            
-            console.log("Enemy used Shoot action, user HP is now " + userGameStats.hp + ", things are not looking good!! D:");
-
-        } else {
-            enemyAction = 'shield';
-            
-            console.log("Enemy shielded");
-
-        }
-
-        return enemyAction;
-    },
-
-    async getResults() {
-
-    }
-
 }

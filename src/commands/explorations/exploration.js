@@ -133,11 +133,11 @@ async function simulateResults(roboLevel, addStuff) {
                 "8": "⁸",
                 "9": "⁹"
             }
-            let mass;
-            let vol;
+            let mass = moon.mass.massExponent?.toString() ?? "1";
+            let vol = moon.vol.volExponent?.toString() ?? "1";
             for (let key in superscript) {
-                mass = moon?.mass?.massExponent ? `${moon?.mass?.massExponent}`?.toString()?.replace(new RegExp(key, "g"), superscript[key]) : "";
-                vol = moon?.vol?.volExponent ? `${moon?.vol?.volExponent}`?.toString()?.replace(new RegExp(key, "g"), superscript[key]) : "";
+                mass = mass.replace(new RegExp(key, "g"), superscript[key]);
+                vol = vol.replace(new RegExp(key, "g"), superscript[key]);
             }
 
             let embed = {
@@ -211,7 +211,6 @@ module.exports = {
                     coll.on("collect", async (m) => {
                         if (!interaction.user.id == m.user.id) return interaction.editReply({ content: "This is not your Exploration!", ephemeral: true });
                         res.update = Object.assign(res.update, { $set: { "missions.expActive": false } });
-                        console.log(res.update);
                         await explorers.updateOne({ user: interaction.user.id }, res.update);
                         client.utils.addXP(interaction.user.id, res.xp)
                         await m.update({ content: "Claimed" });
