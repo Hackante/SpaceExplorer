@@ -14,7 +14,10 @@
         "discActive": "❌ You have already started a discovery."
     },
     "inventory": {
-        "noExplorer": "❌ Unable to find that explorer. Are you sure they are in the SpaceExplorerForce?"
+        "noExplorer": "❌ Unable to find that explorer. Are you sure they are in the SpaceExplorerForce?",
+        "notEnoughCredits": "❌ You don't have enough credits to do that.",
+        "notEnoughItems": "❌ You don't have enough items to do that.",
+        "gifted": "🎁 You have gifted {amount} {item} to {user}."
     },
     "upgrade": {
         "noMaterials": "❌ You don't have enough materials to upgrade your Robo.",

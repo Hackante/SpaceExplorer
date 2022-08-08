@@ -8,9 +8,9 @@ module.exports = (client) => {
             interaction.explorer = await explorers.create({ user: interaction.user.id });
             // Welcome the user with a message
             let embed = {
-                color: client.config.color,
+                color: client.utils.resolveColor(client.config.colors.invis),
                 // TODO: Edit and expand this message
-                description: `Welcome Explorer#${await explorers.count({})}!\nYou are now part of the SpaceExplorationForce!`
+                description: `Welcome Explorer#${await explorers.count({})}!\nYou are now part of the SpaceExplorationForce!\nUse </about:id> (\`/about\`) to get more information about the bot, its commands and how everything works.`
             }
             interaction.user.send({embeds: [embed]});
         }
