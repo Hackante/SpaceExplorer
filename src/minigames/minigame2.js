@@ -1,20 +1,62 @@
 // Sorry for the messy code my friend(s) D:
+// I rushed this so hard lol :o
 
-const { ComponentType } = require("discord.js");
+const { ComponentType, createMessageComponentCollector, MessageEmbed } = require("discord.js");
+const { start } = require("./minigame1");
 
-let actionCollector;
+let actionRow;
+let collector;
 
 module.exports = {
-    async run(client, interaction) {
-        interaction.deferReply();
+    async start(client, interaction) {
+
+        actionRow = {
+            "type": 1,
+            "components": [
+                {
+                    "type": 2,
+                    "label": "Shoot",
+                    "style": 4,
+                    "custom_id": "shoot"
+                },
+                {
+                    "type": 2,
+                    "label": "Recharge",
+                    "style": 1,
+                    "custom_id": "recharge"
+                },
+                {
+                    "type": 2,
+                    "label": "Shield",
+                    "style": 2,
+                    "custom_id": "shield"
+                }
+            ]
+        };
+
+        let userGameStats = {
+            hp: '4',
+            action: undefined,
+            charge: '0', // <-- 0 means no charge, 1 means charge
+            shield: false
+        }
+
+        let enemyGameStats = {
+            hp: '4',
+            action: undefined,
+            charge: '1', // <-- 0 means no charge, 1 means charge
+            shield: false
+        }
 
         // Creating a mission embed
+        console.log("Creating mission embed");
         let missionEmb = {
             color: client.utils.resolveColor(client.config.colors.invis),
             description: `‍🚀 An enemy spaceship has been destroying cargo ships in D sector. We need someone to look into it and take care of the intruder.`,
         }
 
         // We will send this when a user first triggers the commnad
+        console.log("Creating confirmation row");
         let confirmRow = {
             "type": 1,
             "components": [
@@ -33,23 +75,24 @@ module.exports = {
             ]
         };
 
-        interaction.editReply({ embeds: [missionEmb], components: [confirmRow] });
+        console.log("Sending mission task");
+        await interaction.reply({ embeds: [missionEmb], components: [confirmRow] });
 
-
-        const collector = interaction.createMessageComponentCollector({ componentType: ComponentType.Button, time: 15000 });
+        console.log("Making collector");
+        collector = interaction.channel.createMessageComponentCollector({ componentType: ComponentType.Button, time: 15000 });
 
         collector.on('collect', async i => {
             if (i.user.id === interaction.user.id) {
                 if (i.customId === "pursue") {
 
                     // Create objects for each player, in this case, the user and the enemy
-                    let userGameStats = {
+                    userGameStats = {
                         hp: '4',
                         action: undefined,
                         charge: '0' // <-- 0 means no charge, 1 means charge
                     }
 
-                    let enemyGameStats = {
+                    enemyGameStats = {
                         hp: '4',
                         action: undefined,
                         charge: '1' // <-- 0 means no charge, 1 means charge
@@ -64,41 +107,13 @@ module.exports = {
                         description: `‍⚠️ Alert! Alert! Your radar scans have detected a nearby enemy spaceship armed and ready!`,
                     }
 
-                    // Creating a literal *action* row (sorry if it's confusing)
-                    let actionRow = {
-                        "type": 1,
-                        "components": [
-                            {
-                                "type": 2,
-                                "label": "Shoot",
-                                "style": 4,
-                                "custom_id": "shoot"
-                            },
-                            {
-                                "type": 2,
-                                "label": "Recharge",
-                                "style": 1,
-                                "custom_id": "recharge"
-                            },
-                            {
-                                "type": 2,
-                                "label": "Shield",
-                                "style": 2,
-                                "custom_id": "shield"
-                            }
-                        ]
-                    };
 
-                    i.followUp({ embeds: [arkEmb] });
-                    i.followUp({ content: render, components: [actionRow] });
+                    i.reply({ embeds: [arkEmb] });
+                    i.channel.send({ content: render, components: [actionRow] });
 
                 } else if (i.customId === 'cancel') {
                     // Reply if the user cancels the interaction
-                    i.reply({ embeds: [{ color: client.utils.resolveColor(client.config.colors.invis), description: client.config.mission.cancel }] });
-
-                    // Disable both buttons
-                    confirmRow.components[0].setDisabled(true);
-                    confirmRow.components[1].setDisabled(true);
+                    i.reply({ embeds: [{ color: client.utils.resolveColor(client.config.colors.invis), description: "Mission cancelled." }] });
 
                     return;
                 }
@@ -139,13 +154,21 @@ module.exports = {
         let enemyAction = await this.getAction(i, action, userGameStats, enemyGameStats)
         // When a user does an action
         switch (action) {
+
             case "shoot":
                 if (userGameStats.charge == 0) {
-                    i.reply ({ content: "❌ You do not have enough charge to run this command", ephemeral: true })
+                    i.reply({ content: "❌ You do not have enough charge to run this command", ephemeral: true });
+                    return;
+                }
+
+                if (enemyGameStats.shield == true) {
+                    i.reply({ content: "❌ The alien shieleded, you did not damage to him", ephemeral: true });
                     return;
                 }
 
                 enemyGameStats.hp = enemyGameStats.hp - 1;
+                userGameStats.charge = 0;
+                i.reply({ content: "✅ You shot the intruder and dealt **one** heart", ephemeral: true })
 
                 if (enemyGameStats.hp < 1) {
                     // Game over
@@ -157,31 +180,75 @@ module.exports = {
 
             case "recharge":
                 if (userGameStats.charge == 1) {
-                    // Say "you already have full charge"
+                    i.reply({ content: "❌ You already have full charge :D", ephemeral: true });
                     return;
                 }
 
                 userGameStats.charge = 1;
+                i.reply({ content: "✅ You recharged successfully", ephemeral: true })
 
                 break;
 
             case "shield":
-                //
+                i.reply({ content: "✅ You shielded successfully", ephemeral: true })
                 break;
         }
+
+        i.channel.send("The alien used the action " + enemyAction);
+
+        switch (enemyAction) {
+            case "shoot":
+                if (userGameStats.shield = true) return console.log("Since you were shielded, they did not damage");
+                userGameStats.hp = parseInt(userGameStats.hp) - 1;
+                i.channel.send("You lost **one** heart");
+                enemyGameStats.charge = 0;
+                break;
+
+            case "recharge":
+                enemyGameStats.charge = '1';
+                i.channel.send("The alien gained one charge point");
+                break;
+
+            case "shield":
+                enemyGameStats.shield = true;
+                i.channel.send("The enemy shielded");
+                break;
+
+        }
+
+        console.log("Rendering...");
+        let render = await this.render(userGameStats, enemyGameStats);
+        console.log("Rendered");
+        i.channel.send({ content: render, components: [actionRow] });
+
+        console.log("Setting up collector");
+        try {
+            collector = i.channel.createMessageComponentCollector({ componentType: ComponentType.Button, time: 15000 });
+        } catch(err) {
+            console.log(err);
+        }
+
     },
 
     async getAction(i, action, userGameStats, enemyGameStats) {
-        let action;
+        let enemyAction;
         if (enemyGameStats.charge == 0) {
-            action = 'recharge';
+            enemyAction = 'recharge';
+            console.log("Enemy recharged");
+
         } else if (enemyGameStats.charge == 1) {
-            action = 'shoot';
+            enemyAction = 'shoot';
+            
+            console.log("Enemy used Shoot action, user HP is now " + userGameStats.hp + ", things are not looking good!! D:");
+
         } else {
-            action = 'shield';
+            enemyAction = 'shield';
+            
+            console.log("Enemy shielded");
+
         }
 
-        return action;
+        return enemyAction;
     },
 
     async getResults() {
