@@ -1,5 +1,5 @@
 module.exports = (client) => {
-    client.on("ready", () => {
+    client.once("ready", () => {
         // change status every 15 seconds
         let status = [
             "millions of stars",
