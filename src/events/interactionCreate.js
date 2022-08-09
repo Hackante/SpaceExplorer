@@ -10,7 +10,7 @@ module.exports = (client) => {
             let embed = {
                 color: client.utils.resolveColor(client.config.colors.invis),
                 // TODO: Edit and expand this message
-                description: `Welcome Explorer#${await explorers.count({})}!\nYou are now part of the SpaceExplorationForce!\nUse </about:id> (\`/about\`) to get more information about the bot, its commands and how everything works.`,
+                description: `Welcome Explorer#${await explorers.count({})}!\nYou are now part of the SpaceExplorationForce!\nUse </about:1006331856003805236> (\`/about\`) to get more information about the bot, its commands and how everything works.`,
                 thumbnail: {
                     url: interaction.user.displayAvatarURL()
                 },
