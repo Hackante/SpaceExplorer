@@ -29,6 +29,7 @@ module.exports = {
             thumbnail: {
                 url: interaction.user.displayAvatarURL()
             },
+            color: client.utils.resolveColor(client.config.colors.invis)
         }
         let components = [{
             type: 1,

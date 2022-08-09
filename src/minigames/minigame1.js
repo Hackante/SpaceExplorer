@@ -130,18 +130,19 @@ module.exports = {
                 update.iron = interaction.explorer.level * 5 + Math.floor(Math.random() * (10 + 5) - 5);
                 update.copper = interaction.explorer.level * 3 + Math.floor(Math.random() * (5 + 2) - 3);
                 update.silver = interaction.explorer.level * 3 + Math.floor(Math.random() * (5 + 2) - 3);
-                interaction.followUp({ content: `You failed! You still got some rewards for your effort:\nIron: ${update.iron}\nCopper: ${update.copper}\nSilver: ${update.silver}` });
+                await interaction.followUp({ content: `You failed! You still got some rewards for your effort:\nIron: ${update.iron}\nCopper: ${update.copper}\nSilver: ${update.silver}` });
             } else {
                 update.iron = interaction.explorer.level * 10 + Math.floor(Math.random() * (15 + 5) - 5);
                 update.copper = interaction.explorer.level * 5 + Math.floor(Math.random() * (10 + 2) - 3);
                 update.silver = interaction.explorer.level * 5 + Math.floor(Math.random() * (10 + 2) - 3);
-                interaction.followUp({ content: `You won! Here are your rewards:\nIron: ${update.iron}\nCopper: ${update.copper}\nSilver: ${update.silver}` });
+                await interaction.followUp({ content: `You won! Here are your rewards:\nIron: ${update.iron}\nCopper: ${update.copper}\nSilver: ${update.silver}` });
             }
             let u = {}
             for (let key in update) {
                 u[`inventory.materials.${key}`] = update[key];
             }
-            await explorers.updateOne({ userId: interaction.user.id }, { $inc: {...u, "inventory.credits": r == "failed" ? 50 : 100}, $set: { "missions.lastDiscovery": Date.now(), "missions.discActive": false } });
+            let up = { $inc: Object.assign(u, {"inventory.credits": r == "failed" ? 50 : 100}), $set: { "missions.lastDiscovery": Date.now(), "missions.discActive": false } }
+            await explorers.updateOne({ user: interaction.user.id }, up);
             client.utils.addXP(interaction.user.id, r == "failed" ? 25 : 50);
         });
     }

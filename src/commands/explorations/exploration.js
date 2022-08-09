@@ -33,6 +33,7 @@ async function simulateResults(roboLevel, addStuff) {
                         title: "Error",
                         description: "Your Robo almost found a planet. The SpaceExplorationForce thanked you with a small reward:",
                         fields: [{ name: "Materials", value: `${material1}: +${value1}\n${material2}: +${value2}`, inline: false }],
+                        color: client.utils.resolveColor(client.config.colors.invis)
                     }
                     ret = { message: { content: "We are sorry for not returning an existing planet. We had some issues with the API.", embeds: [embed] }, update: { $inc: { [`robo.${roboLevel}.materials.${material1}`]: value1, [`robo.${roboLevel}.materials.${material2}`]: value2 } }, xp: Math.floor(Math.random() * (roboLevel / 2 + 25) + 25) };
                 } else {
@@ -50,6 +51,7 @@ async function simulateResults(roboLevel, addStuff) {
                             title: "Error",
                             description: "Your Robo almost found a planet. The SpaceExplorationForce thanked you with a small reward:",
                             fields: [{ name: "Materials", value: `${material1}: +${value1}\n${material2}: +${value2}`, inline: false }],
+                            color: client.utils.resolveColor(client.config.colors.invis)
                         }
                         ret = { message: { content: "We are sorry for not returning an existing planet. We had some issues with the API.", embeds: [embed] }, update: { $inc: { [`robo.${roboLevel}.materials.${material1}`]: value1, [`robo.${roboLevel}.materials.${material2}`]: value2 } }, xp: Math.floor(Math.random() * (roboLevel / 2 + 25) + 25) };
                     }
@@ -72,7 +74,8 @@ async function simulateResults(roboLevel, addStuff) {
                         ],
                         footer: {
                             text: "All Data is provided by API Ninjas' Planet API. We do not own any of the data and do not guarantee its accuracy."
-                        }
+                        },
+                        color: client.utils.resolveColor(client.config.colors.invis)
                     }
                     ret = { message: { embeds: [embed] }, update: { $inc: { [`inventory.materials.${material1}`]: value1, [`inventory.materials.${material2}`]: value2 } }, xp: Math.floor(Math.random() * (roboLevel / 2 + 25) + 25) };
                 }
@@ -110,7 +113,8 @@ async function simulateResults(roboLevel, addStuff) {
                 ],
                 footer: {
                     text: "All data is provided by NASA's NeoWs API. We do not own any of the data and do not guarantee its accuracy.",
-                }
+                },
+                color: client.utils.resolveColor(client.config.colors.invis)
             }
             addStuff({ message: { embeds: [embed] }, update: { $inc: { [`inventory.materials.${material1.toLowerCase()}`]: value1, [`inventory.materials.${material2.toLowerCase()}`]: value2 } }, xp: Math.floor(Math.random() * (roboLevel / 2 + 15) + 15) });
             break;
@@ -154,7 +158,8 @@ async function simulateResults(roboLevel, addStuff) {
                 ],
                 footer: {
                     text: "All data is provided by the Solar System API. We do not own any of the data and do not guarantee its accuracy.",
-                }
+                },
+                color: client.utils.resolveColor(client.config.colors.invis)
             }
             addStuff({ message: { embeds: [embed] }, update: { $inc: { [`inventory.materials.${material1.toLowerCase()}`]: value1 } }, xp: Math.floor(Math.random() * (roboLevel / 2 + 10) + 10) });
             break;

@@ -158,9 +158,9 @@ module.exports = {
                         "description": `You got ${credits} credits, ${iron} iron, ${copper} copper, ${silver} silver and ${xp} xp.`,
                         "color": res == "Player" ? 0x00ff00 : 0xff0000,
                     }
-                    b.followUp({ embeds: [embed] });
+                    await b.followUp({ embeds: [embed] });
                     client.utils.addXP(interaction.user.id, xp);
-                    explorers.updateOne({ userId: interaction.user.id }, { $inc: { "inventory.credits": credits, "inventory.materials.iron": iron, "inventory.materials.copper": copper, "inventory.materials.silver": silver } });
+                    await explorers.updateOne({ user: interaction.user.id }, { $inc: { "inventory.credits": credits, "inventory.materials.iron": iron, "inventory.materials.copper": copper, "inventory.materials.silver": silver } });
                 }
             });
             collector.on("end", async (collected, reason) => {

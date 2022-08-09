@@ -6,8 +6,8 @@ module.exports = {
         description: "Complete a discovery mission.",
     },
     run: async function (interaction, client) {
-        // if last discovery was less than 12 hours ago, return
-        if (interaction.explorer.missions.lastDiscovery > Date.now() - 43200000) {
+        // if last discovery was less than 6 hours ago, return
+        if (interaction.explorer.missions.lastDiscovery > Date.now() - 21600000) {
             interaction.reply({ content: interaction.i18n("mission.notReady", { time: Math.floor(Date.now() / 1000) + 43200 }), ephemeral: true });
             return;
         }

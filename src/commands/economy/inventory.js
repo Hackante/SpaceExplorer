@@ -35,6 +35,7 @@ module.exports = {
             thumbnail: {
                 url: user.displayAvatarURL()
             },
+            color: client.utils.resolveColor(client.config.colors.invis)
         }
         interaction.reply({embeds: [embed]});
         return;

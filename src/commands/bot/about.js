@@ -47,7 +47,8 @@ Here is a list of the commands and what they do:
             },
             footer: {
                 text: `Thanks for using ${client.user.username}!`
-            }
+            },
+            color: client.utils.resolveColor(client.config.colors.invis)
         }
         interaction.reply({embeds: [embed]});
     }
