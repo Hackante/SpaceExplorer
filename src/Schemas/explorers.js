@@ -12,7 +12,8 @@ const schema = new Schema({
             iron: { type: Number, default: 0 },
             copper: { type: Number, default: 0 },
             silver: { type: Number, default: 0 },
-        }
+        },
+        daily: { type: Date, default: null },
     },
     statistics: {
         joined: { type: Date, default: new Date() },

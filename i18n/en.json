@@ -17,7 +17,9 @@
         "noExplorer": "❌ Unable to find that explorer. Are you sure they are in the SpaceExplorerForce?",
         "notEnoughCredits": "❌ You don't have enough credits to do that.",
         "notEnoughItems": "❌ You don't have enough items to do that.",
-        "gifted": "🎁 You have gifted {amount} {item} to {user}."
+        "gifted": "🎁 You have gifted {amount} {item} to {user}.",
+        "dailyCooldown": "❌ You cannot collect your daily reward yet. Please come back <t:{time}:R>.",
+        "daily": "🎁 You have collected your daily reward. You got {amount} credits."
     },
     "upgrade": {
         "noMaterials": "❌ You don't have enough materials to upgrade your Robo.",
