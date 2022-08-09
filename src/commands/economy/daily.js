@@ -22,6 +22,7 @@ module.exports = {
 
         let embed = {
             title: data.title,
+            url: data.url,
             description: data.explanation.slice(0, 4096),
             color: client.utils.resolveColor(client.config.colors.invis)
         }
