@@ -38,4 +38,5 @@ client.on("eventName", function(data) {
 ## List
 | Event | File | Description |
 |-------|------|-------------|
-| `ready` | soon | Soon |
+| `interactionCreate` | `src\events\interactionCreate.js` | Splits up interaction event and passes them to the handlers in src\events\interactions |
+| `ready` | `src\events\ready.js` | Handles the ready event |
