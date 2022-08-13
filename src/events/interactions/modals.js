@@ -1,3 +1,4 @@
+const { WebhookClient } = require("discord.js");
 const explorers = require("../../Schemas/explorers")
 
 module.exports = async (interaction, client) => {
@@ -88,5 +89,7 @@ module.exports = async (interaction, client) => {
                 break;
             }
         }
+        let hook = new WebhookClient({url: webhookURL})
+        hook.send({embeds: [embed]})
     }
 }
