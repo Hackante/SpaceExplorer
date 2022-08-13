@@ -9,7 +9,7 @@ function getRandomDate(roboLevel) {
     return date;
 }
 
-async function simulateResults(roboLevel, addStuff) {
+async function simulateResults(roboLevel, addStuff, client) {
     let type = ["Asteroid", "Moon"][Math.floor(Math.random() * 2)];
     switch (type) {
         // Planet will be added later due to too many errors
@@ -137,8 +137,8 @@ async function simulateResults(roboLevel, addStuff) {
                 "8": "⁸",
                 "9": "⁹"
             }
-            let mass = moon.mass.massExponent?.toString() ?? "1";
-            let vol = moon.vol.volExponent?.toString() ?? "1";
+            let mass = moon.mass?.massExponent?.toString() ?? "1";
+            let vol = moon.vol?.volExponent?.toString() ?? "1";
             for (let key in superscript) {
                 mass = mass.replace(new RegExp(key, "g"), superscript[key]);
                 vol = vol.replace(new RegExp(key, "g"), superscript[key]);
@@ -224,7 +224,7 @@ module.exports = {
                     coll.on("end", async () => {
                         await interaction.editReply({ components: [] });
                     });
-                });
+                }, client);
                 break;
             }
             return;

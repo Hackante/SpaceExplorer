@@ -31,13 +31,16 @@ module.exports = (client) => {
                 require("./interactions/applicationCommand")(interaction, client);
                 break;
             } case 3: {
-                // MessageComponent
+                // Buttons
+                if(interaction.isButton()) {
+                    require("./interactions/buttons")(interaction, client);
+                }
                 break;
             } case 4: {
                 // AutoComplete
                 break;
             } case 5: {
-                // ModalSubmit
+                require("./interactions/modals")(interaction, client);
                 break;
             } default: {
                 // Ping or unknown
