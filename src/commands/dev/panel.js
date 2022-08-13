@@ -30,14 +30,14 @@ module.exports = {
                     {
                         type: 2,
                         label: "Stop",
-                        style: 3,
+                        style: 4,
                         custom_id: "dev-stop",
                         disabled: false,
                     },
                     {
                         type: 2,
                         label: "Eval",
-                        style: 1,
+                        style: 2,
                         custom_id: "dev-eval",
                         disabled: false,
                     }
