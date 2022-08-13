@@ -5,6 +5,7 @@ const { Collection } = require("discord.js");
 const { connect, connection } = require("mongoose");
 
 const { client } = require("./index.js");
+const { QuickDB } = require("quick.db");
 
 // Collections
 client.commands = new Collection();
@@ -75,3 +76,6 @@ client.utils = require("./utils.js");
 
 // i18n
 client.i18n = require("../i18n");
+
+// QuickDB
+client.db = new QuickDB()

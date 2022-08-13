@@ -20,6 +20,7 @@ const schema = new Schema({
     },
     settings: {
         language: { type: String, default: "en" },
+        beta: { type: Boolean, default: false },
     },
     missions: {
         lastDiscovery: { type: Date, default: new Date(0) },

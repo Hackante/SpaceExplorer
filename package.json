@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/Hackante/SpaceExplorer#readme",
   "dependencies": {
+    "better-sqlite3": "^7.6.2",
     "child_process": "^1.0.2",
     "discord.js": "^14.1.2",
     "dotenv": "^16.0.1",

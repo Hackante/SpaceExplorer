@@ -15,7 +15,7 @@ module.exports = (interaction, client) => {
         interaction.reply({content: "❎ You do not have permission to use this command!\nMissing: [Developer]", ephemeral: true});
         return;
     }
-    if(command.betaOnly && !interaction.explorer.config.beta) {
+    if(command.betaOnly && !interaction.explorer.settings.beta) {
         interaction.reply({content: "❎ You do not have permission to use this command!\nMissing: [Beta Access]", ephemeral: true});
         return;
     }
