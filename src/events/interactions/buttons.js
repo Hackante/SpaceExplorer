@@ -49,7 +49,6 @@ module.exports = async (interaction, client) => {
                             "label": "Title",
                             "style": 1,
                             "placeholder": "/daily failed",
-                            "required": true,
                             "max_length": 256,
                             "min_length": 1
                         }, {
@@ -58,7 +57,6 @@ module.exports = async (interaction, client) => {
                             "label": "Description",
                             "style": 2,
                             "placeholder": "Detailled description...",
-                            "required": true,
                             "min_length": 20,
                         }]
                     }]
@@ -77,7 +75,6 @@ module.exports = async (interaction, client) => {
                             "label": "Title",
                             "style": 1,
                             "placeholder": "/spacenews command",
-                            "required": true,
                             "max_length": 256,
                             "min_length": 1
                         }, {
@@ -86,7 +83,6 @@ module.exports = async (interaction, client) => {
                             "label": "Description",
                             "style": 2,
                             "placeholder": "Detailled description...",
-                            "required": true,
                             "min_length": 20,
                         }]
                     }]
@@ -105,7 +101,6 @@ module.exports = async (interaction, client) => {
                             "label": "User ID",
                             "style": 1,
                             "placeholder": "e.g. 517335997172809728",
-                            "required": true,
                             "max_length": 20,
                             "min_length": 18,
                         }, {
@@ -114,7 +109,6 @@ module.exports = async (interaction, client) => {
                             "label": "Reason",
                             "style": 2,
                             "placeholder": "Detailled description...",
-                            "required": true,
                             "min_length": 20,
                         }]
                     }]
