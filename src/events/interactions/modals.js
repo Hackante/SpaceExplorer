@@ -1,3 +1,5 @@
+const explorers = require("../../Schemas/explorers")
+
 module.exports = async (interaction, client) => {
     function find(customID) {
         return interaction.components.find(component => component.components.find(field => field.custom_id == customID)).value;
