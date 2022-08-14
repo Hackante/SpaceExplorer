@@ -51,7 +51,10 @@ module.exports = async (interaction, client) => {
                             "placeholder": "/daily failed",
                             "max_length": 256,
                             "min_length": 1
-                        }, {
+                        }]
+                    }, {
+                        "type": 1,
+                        "components": [{
                             "type": 4,
                             "custom_id": "bug-description",
                             "label": "Description",
@@ -74,15 +77,16 @@ module.exports = async (interaction, client) => {
                             "custom_id": "feature-title",
                             "label": "Title",
                             "style": 1,
-                            "placeholder": "/spacenews command",
                             "max_length": 256,
                             "min_length": 1
-                        }, {
+                        }]
+                    }, {
+                        "type": 1,
+                        "components": [{
                             "type": 4,
                             "custom_id": "feature-description",
                             "label": "Description",
                             "style": 2,
-                            "placeholder": "Detailled description...",
                             "min_length": 20,
                         }]
                     }]
@@ -103,7 +107,10 @@ module.exports = async (interaction, client) => {
                             "placeholder": "e.g. 517335997172809728",
                             "max_length": 20,
                             "min_length": 18,
-                        }, {
+                        }]
+                    }, {
+                        "type": 1,
+                        "components": [{
                             "type": 4,
                             "custom_id": "user-reason",
                             "label": "Reason",

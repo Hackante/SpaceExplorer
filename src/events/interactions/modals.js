@@ -3,7 +3,7 @@ const explorers = require("../../Schemas/explorers")
 
 module.exports = async (interaction, client) => {
     function find(customID) {
-        return interaction.components.find(component => component.components.find(field => field.custom_id == customID)).value;
+        return interaction.components.find(component => component.components.some(field => field.customId == customID)).components.find(field => field.customId == customID).value;
     }
 
     if (interaction.customId == "dev-eval") {
@@ -89,7 +89,10 @@ module.exports = async (interaction, client) => {
                 break;
             }
         }
-        let hook = new WebhookClient({url: webhookURL})
-        hook.send({embeds: [embed]})
+        embed.footer.text += `\n(by ${interaction.user.id})`
+        let hook = new WebhookClient({ url: webhookURL })
+        hook.send({ embeds: [embed] }).then(m => {
+            interaction.reply({content: "✅ Your report has been sent!"})
+        })
     }
 }
