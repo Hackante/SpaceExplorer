@@ -3,7 +3,6 @@ module.exports = {
         name: "report",
         description: "Report a bug, a feature or a user.",
     },
-    betaOnly: true,
     run: async function (interaction, client) {
         let embed = {
             color: client.utils.resolveColor(client.config.colors.invis),
@@ -15,7 +14,7 @@ module.exports = {
             components: [{
                     type: 2,
                     label: "Bug",
-                    style: 3,
+                    style: 1,
                     custom_id: `report-bug-${interaction.user.id}`,
                     disabled: false,
                 }, {

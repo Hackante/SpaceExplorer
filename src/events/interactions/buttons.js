@@ -59,7 +59,7 @@ module.exports = async (interaction, client) => {
                             "custom_id": "bug-description",
                             "label": "Description",
                             "style": 2,
-                            "placeholder": "Detailled description...",
+                            "placeholder": "Detailed description of the bug (step by step)",
                             "min_length": 20,
                         }]
                     }]
@@ -77,6 +77,7 @@ module.exports = async (interaction, client) => {
                             "custom_id": "feature-title",
                             "label": "Title",
                             "style": 1,
+                            "placeholder": "/spacenews command",
                             "max_length": 256,
                             "min_length": 1
                         }]
@@ -87,6 +88,7 @@ module.exports = async (interaction, client) => {
                             "custom_id": "feature-description",
                             "label": "Description",
                             "style": 2,
+                            "placeholder": "Detailed description of the feature and why it's needed",
                             "min_length": 20,
                         }]
                     }]
@@ -115,7 +117,7 @@ module.exports = async (interaction, client) => {
                             "custom_id": "user-reason",
                             "label": "Reason",
                             "style": 2,
-                            "placeholder": "Detailled description...",
+                            "placeholder": "Detailed description why the user should be banned",
                             "min_length": 20,
                         }]
                     }]
