@@ -12,6 +12,7 @@ module.exports = async (interaction, client) => {
             break;
         }
         case "dev-eval": {
+            if (!client.config.developers.includes(interaction.user.id)) return interaction.reply({ content: "❎ You do not have permission to use this command!\nMissing: [Developer]", ephemeral: true });
             interaction.showModal(
                 {
                     "title": "Evaluate code",
@@ -30,8 +31,35 @@ module.exports = async (interaction, client) => {
                 }
             )
             break;
+        } 
+        case "dev-changes": {
+            if (!client.config.developers.includes(interaction.user.id)) return interaction.reply({ content: "❎ You do not have permission to use this command!\nMissing: [Developer]", ephemeral: true });
+            interaction.showModal(
+                {
+                    "title": "Announce changes",
+                    "custom_id": "dev-changes",
+                    "components": [{
+                        "type": 1,
+                        "components": [{
+                            "type": 4,
+                            "custom_id": "changes-message",
+                            "label": "Message",
+                            "style": 2,
+                            "placeholder": "Message...",
+                            "required": true
+                        }]
+                    }]
+                }
+            );
+            break;
         }
     }
+// TODO: 
+/**
+ * Specify the type of the announcement (changes, major, giveaway, all)
+ * Depending on the type change the embed title and send to other users
+ */
+
 
     // ids with userID
     if (interaction.customId.startsWith("report-")) {
@@ -123,6 +151,30 @@ module.exports = async (interaction, client) => {
                     }]
                 }
                 interaction.showModal(userModal);
+                break;
+            }
+        }
+    }
+    if(interaction.customId.startsWith("changes-")) {
+        switch(interaction.customId.split("-")[1]) {
+            case "confirm": {
+                let e = await client.db.get("dev-changes-pre");
+                await client.db.set("dev-changes-pre", null);
+                await client.db.set("dev-changes", e);
+
+                explorers.find({"subscriptions.changes": true}).then(async (users) => {
+                    for(let user of users) {
+                        let u = await client.users.fetch(user.user);
+                        u.send({embeds: [e]})
+                    }
+                }).catch(console.error);
+
+                break;
+            } case "cancel": {
+
+                break;
+            } case "all": {
+
                 break;
             }
         }

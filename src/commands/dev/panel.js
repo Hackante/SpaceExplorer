@@ -5,7 +5,7 @@ module.exports = {
     },
     devOnly: true,
     run: async function (interaction, client) {
-        // panel embed with two buttons (stop and eval)
+        // panel embed with two buttons (stop, eval, changes)
         let embed = {
             color: client.utils.resolveColor(client.config.colors.invis),
             description: "Do some Dev action here.",
@@ -18,6 +18,10 @@ module.exports = {
                 {
                     name: "**Eval**",
                     value: "Evaluate a code",
+                    inline: true
+                }, {
+                    name: "**Changes**",
+                    value: "Announce a chnage log message",
                     inline: true
                 }
             ]
@@ -39,6 +43,12 @@ module.exports = {
                         label: "Eval",
                         style: 2,
                         custom_id: "dev-eval",
+                        disabled: false,
+                    }, {
+                        type: 2,
+                        label: "Changes",
+                        style: 1,
+                        custom_id: "dev-changes",
                         disabled: false,
                     }
                 ]

@@ -31,7 +31,12 @@ const schema = new Schema({
     robo: {
         level: { type: Number, default: 1 },
         upgrades: { type: Array, default: [] },
-    }
+    }, 
+    subscriptions: {
+        changes: { type: Boolean, default: false },
+        major: { type: Boolean, default: true },
+        giveaways: { type: Boolean, default: true },
+    },
 });
 
 module.exports = model("Explorers", schema);
